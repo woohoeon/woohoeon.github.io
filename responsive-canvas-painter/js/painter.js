@@ -1,6 +1,7 @@
 /**
  * painter.js
  */
+'use strict';
 
 const _start = 'mousedown', 
 _move = 'mousemove',
@@ -40,14 +41,12 @@ const Pen = (() => {
 	
 })();
 
-const canvasPainter = (area, id, interfaceId, canvasW, canvasH) => {
+const canvasPainter = (id, interfaceId, canvasW, canvasH) => {
 	
 	const canvas = document.getElementById(id),
 	canvasI = document.getElementById(interfaceId),
 	ctx = canvas.getContext('2d'),
-	ctxI = canvasI.getContext('2d'),
-	section = document.getElementById(area), 
-	paintStyle = getComputedStyle(section);
+	ctxI = canvasI.getContext('2d');
 
 	canvas.width = canvasW;
 	canvas.height = canvasH;
@@ -62,6 +61,13 @@ const canvasPainter = (area, id, interfaceId, canvasW, canvasH) => {
 	windowH = window.innerHeight,
 	offsetLeft = canvas.offsetLeft,
 	offsetTop = canvas.offsetTop;
+	
+	const _onPaint = () => {
+		const mouseX = canvas.offsetLeft !== 0 ? (mouse.x - canvas.offsetLeft) : mouse.x; 
+		const mouseY = canvas.offsetTop !== 0 ? (mouse.y - canvas.offsetTop) : mouse.y; 
+		ctx.lineTo(mouseX, mouseY);
+		ctx.stroke();
+	};
 	
 	const _handleMouseDown = () => {
 		ctx.beginPath();
@@ -80,14 +86,7 @@ const canvasPainter = (area, id, interfaceId, canvasW, canvasH) => {
 		canvas.removeEventListener(_move, _onPaint, false);
 		drawData = canvas.toDataURL();
 	};
-	
-	const _onPaint = () => {
-		const mouseX = canvas.offsetLeft != 0 ? (mouse.x - canvas.offsetLeft) : mouse.x; 
-		const mouseY = canvas.offsetTop != 0 ? (mouse.y - canvas.offsetTop) : mouse.y; 
-		ctx.lineTo(mouseX, mouseY);
-		ctx.stroke();
-	};
-	
+		
 	const _setCtx = () => {
 		ctx.globalCompositeOperation = chose.getOperation();
 		ctx.strokeStyle = chose.getColor();
